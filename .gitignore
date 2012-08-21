@@ -4,3 +4,5 @@ lib/
 target/
 bin/
 src/test/resources/faces/
+src/test/resources/trainingset/
+src/test/resources/testset/
