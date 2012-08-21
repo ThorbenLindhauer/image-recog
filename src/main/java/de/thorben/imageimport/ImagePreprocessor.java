@@ -1,6 +1,6 @@
 package de.thorben.imageimport;
 
-public class Preprocessor {
+public class ImagePreprocessor {
 
 	public void interpolateNewMaximumGrey(Image image, short maximumGreyValue) {
 		double scaleFactor = (double) maximumGreyValue / (double)image.getMaximumGreyScale();

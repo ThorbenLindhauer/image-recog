@@ -28,7 +28,7 @@ public class ImageImportTest {
 		Image image = importer.loadSingleImage(ImageImportTest.class.getResource("../../../face/test.pgm").getPath());
 		image.exportToPgm("unprocessed.pgm");
 		
-		Preprocessor preprocessor = new Preprocessor();
+		ImagePreprocessor preprocessor = new ImagePreprocessor();
 		preprocessor.interpolateNewMaximumGrey(image, (short) 255);
 		image.exportToPgm("processed.pgm");
 	}
