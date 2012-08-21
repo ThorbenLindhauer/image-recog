@@ -4,7 +4,10 @@ lib/
 target/
 bin/
 src/main/resources/faces/
+src/main/resources/lessFaces/
 
 src/test/resources/faces/
 src/test/resources/trainingset/
 src/test/resources/testset/
+
+eigenfaces/

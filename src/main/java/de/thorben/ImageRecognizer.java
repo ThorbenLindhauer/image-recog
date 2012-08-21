@@ -2,7 +2,6 @@ package de.thorben;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryIteratorException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +31,36 @@ public class ImageRecognizer {
 		
 		SingularValueDecomposition svd = m.svd();
 		System.out.println("SVD complete");
+		
+		exportFirstEigenfaces(svd, 20);		
+		System.out.println("Exported eigenfaces");
+		
 	}
 	
+	/**
+	 * Exports the top k eigenfaces.
+	 * @param svd
+	 * @param k
+	 */
+	private void exportFirstEigenfaces(SingularValueDecomposition svd, int k) {
+		EigenfaceCreator creator = new EigenfaceCreator(svd, IMAGE_X_SIZE, IMAGE_Y_SIZE, MAXIMUM_GREY_VALUE);
+		List<Image> eigenfaces = creator.getFirstEigenfaces(k);
+		
+		int i = 0;
+		for (Image eigenface : eigenfaces) {
+			try {
+				eigenface.exportToPgm("eigenfaces/eigenface" + i + ".pgm");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			i++;
+		}
+	}
+
+	/**
+	 * Loads all pgm images from the specified path and all subfolders and puts them in a single matrix.
+	 * @return
+	 */
 	private Matrix loadImagesAndBuildMatrix() {
 		ImageImporter importer = new ImageImporter(IMAGE_X_SIZE, IMAGE_Y_SIZE);
 		ImagePreprocessor preprocessor = new ImagePreprocessor();
