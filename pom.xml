@@ -18,5 +18,10 @@
 			<version>1.9.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>gov.nist.math</groupId>
+			<artifactId>jama</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 	</dependencies>
 </project>
