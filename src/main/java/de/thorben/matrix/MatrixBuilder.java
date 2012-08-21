@@ -1,7 +1,6 @@
 package de.thorben.matrix;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import Jama.Matrix;
