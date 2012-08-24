@@ -3,7 +3,9 @@ package de.thorben;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Jama.Matrix;
 import Jama.SingularValueDecomposition;
@@ -20,23 +22,41 @@ public class ImageRecognizer {
 	private static final short MAXIMUM_GREY_VALUE = 255;
 	
 	private String trainingSetPath;
+	private List<Image> images;
+	private SingularValueDecomposition svd;
+	private Map<Image, Matrix> mappedImages;
+	
+	public ImageRecognizer() {
+		mappedImages = new HashMap<Image, Matrix>();
+	}
 	
 	public void setTrainingSetPath(String path) {
 		trainingSetPath = path;
 	}
 	
 	public void buildUp() {
-		Matrix m = loadImagesAndBuildMatrix();
+		images = loadImages();
+		Matrix m = buildMatrix();
 		System.out.println("Image loading successful.");
 		
-		SingularValueDecomposition svd = m.svd();
+		svd = m.svd();
 		System.out.println("SVD complete");
 		
 		exportFirstEigenfaces(svd, 20);		
 		System.out.println("Exported eigenfaces");
 		
+		mapImagesToLatentSpace();
+		
 	}
 	
+	private void mapImagesToLatentSpace() {
+		for (Image image : images) {
+			Matrix vector = image.getDataAsSingleDimensionalVector();
+			Matrix mappedImage = svd.getU().transpose().arrayTimes(vector);
+			mappedImages.put(image, mappedImage);
+		}		
+	}
+
 	/**
 	 * Exports the top k eigenfaces.
 	 * @param svd
@@ -58,22 +78,28 @@ public class ImageRecognizer {
 	}
 
 	/**
-	 * Loads all pgm images from the specified path and all subfolders and puts them in a single matrix.
+	 * Loads all pgm images from the specified path and all subfolders
 	 * @return
 	 */
-	private Matrix loadImagesAndBuildMatrix() {
+	private List<Image> loadImages() {
 		ImageImporter importer = new ImageImporter(IMAGE_X_SIZE, IMAGE_Y_SIZE);
 		ImagePreprocessor preprocessor = new ImagePreprocessor();
 		
 		File trainingSetDirectory = new File(trainingSetPath);
-		List<Image> images = loadImages(importer, preprocessor, trainingSetDirectory);
-		
+		return loadImages(importer, preprocessor, trainingSetDirectory);
+	}
+	
+	/**
+	 * puts all loaded images in a matrix
+	 * @return
+	 */
+	private Matrix buildMatrix() {
 		MatrixBuilder builder = new MatrixBuilder(IMAGE_X_SIZE, IMAGE_Y_SIZE);
 		for (Image image : images) {
 			builder.addImage(image);
 		}
 		
-		return builder.buildMatrix();		
+		return builder.buildMatrix();	
 	}
 	
 	/**

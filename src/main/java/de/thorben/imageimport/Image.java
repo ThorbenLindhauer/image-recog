@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import Jama.Matrix;
+
 public class Image {
 
 	private int xSize;
@@ -20,6 +22,19 @@ public class Image {
 	public short[][] getData() {
 		return data;
 	}
+	
+	public Matrix getDataAsSingleDimensionalVector() {
+		Matrix vector = new Matrix(xSize * ySize, 1);
+		
+		for (int y = 0; y < ySize; y++) {
+			for (int x = 0; x < xSize; x++) {
+				vector.set(y * ySize + x, 0, data[y][x]);
+			}
+		}
+		
+		return vector;
+	}
+	
 	public void setPoint(int x, int y, short value) {
 		data[y][x] = value;
 	}
