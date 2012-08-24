@@ -6,7 +6,9 @@ import java.util.List;
 import Jama.Matrix;
 import Jama.SingularValueDecomposition;
 import de.thorben.imageimport.Image;
+import de.thorben.imageimport.ImageBuilder;
 import de.thorben.imageimport.ImagePreprocessor;
+import de.thorben.math.MathHelper;
 
 public class EigenfaceCreator {
 
@@ -47,15 +49,17 @@ public class EigenfaceCreator {
 	}
 	
 	private Image buildImageFromVector(double[] vector) {
-		Image image = new Image(imageXSize, imageYSize);
-		image.setMaximumGreyScale(maximumGreyScaleValue);
+		double minimalValue = MathHelper.minimalComponent(vector);
+		ImageBuilder imgBuilder = new ImageBuilder();
+		imgBuilder.newImage(imageXSize, imageYSize);
 		
 		int x = 0;
 		int y = 0;
 		for (int j = 0; j < vector.length; j++) {
-			Double matrixValue = new Double(vector[j] * NORMALIZING_SCALAR);	// TODO refactor
+			// normalize to value between 0 and maxValue*NORMALIZING_SCALAR
+			Double matrixValue = new Double((vector[j] - minimalValue) * NORMALIZING_SCALAR);	
 			short pixelValue = matrixValue.shortValue();
-			image.setPoint(x, y, pixelValue);
+			imgBuilder.setPoint(x, y, pixelValue);
 
 			if (x < imageXSize - 1) {
 				x++;
@@ -65,6 +69,27 @@ public class EigenfaceCreator {
 			}
 		}
 		
+		
+//		Image image = new Image(imageXSize, imageYSize);
+//		image.setMaximumGreyScale(maximumGreyScaleValue);
+//		
+//		int x = 0;
+//		int y = 0;
+//		for (int j = 0; j < vector.length; j++) {
+//			// normalize to value between 0 and maxValue*NORMALIZING_SCALAR
+//			Double matrixValue = new Double((vector[j] - minimalValue) * NORMALIZING_SCALAR);	
+//			short pixelValue = matrixValue.shortValue();
+//			image.setPoint(x, y, pixelValue);
+//
+//			if (x < imageXSize - 1) {
+//				x++;
+//			} else {
+//				x = 0;
+//				y++;
+//			}
+//		}
+		
+		Image image = imgBuilder.buildImage();
 		ImagePreprocessor preprocessor = new ImagePreprocessor();
 		preprocessor.interpolateNewMaximumGrey(image, maximumGreyScaleValue);
 		return image;

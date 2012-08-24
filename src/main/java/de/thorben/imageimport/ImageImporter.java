@@ -20,26 +20,26 @@ public class ImageImporter {
 
 	public Image loadSingleImage(String filePath){
 		File file = new File(filePath);
-		Image image = null;
+		ImageBuilder imgBuilder = new ImageBuilder();
 		try {
 			FileInputStream fileStream = new FileInputStream(file);
 			InputStreamReader inputStreamReader = new InputStreamReader(fileStream);
 			BufferedReader reader = new BufferedReader(inputStreamReader);
 			
-			image = new Image(xSize, ySize);
+			imgBuilder.newImage(xSize, ySize);
 			
-			readPrefixes(reader, image);
-			readContent(reader, image);			
+			readPrefixes(reader, imgBuilder);
+			readContent(reader, imgBuilder);			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		return image;
+		return imgBuilder.buildImage();
 	}
 
-	private void readContent(BufferedReader reader, Image image) throws IOException {
+	private void readContent(BufferedReader reader, ImageBuilder imgBuilder) throws IOException {
 		String line = reader.readLine(); 
 		int xPos = 0;
 		int yPos = 0;
@@ -47,7 +47,7 @@ public class ImageImporter {
 			String[] values = line.trim().split(DELIMITER);
 			for (int i = 0; i < values.length; i++) {
 				short value = Short.parseShort(values[i]);
-				image.setPoint(xPos, yPos, value);
+				imgBuilder.setPoint(xPos, yPos, value);
 				xPos++;
 				if (xPos == xSize) {
 					// go to next line
@@ -60,7 +60,7 @@ public class ImageImporter {
 	}
 
 
-	private void readPrefixes(BufferedReader reader, Image image) throws IOException {
+	private void readPrefixes(BufferedReader reader, ImageBuilder imgBuilder) throws IOException {
 		int tokenCounter = 1;
 		
 		while(tokenCounter < 5) {
@@ -68,7 +68,7 @@ public class ImageImporter {
 			String[] tokens = line.split(DELIMITER);
 			for (int i = 0; i < tokens.length; i++, tokenCounter++) {
 				if (tokenCounter == 4) {
-					image.setMaximumGreyScale(Short.parseShort(tokens[i]));
+					imgBuilder.setMaximumGreyScaleValue(Short.parseShort(tokens[i]));
 				}
 			}
 		}
