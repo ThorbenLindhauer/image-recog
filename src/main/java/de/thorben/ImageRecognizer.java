@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import Jama.Matrix;
 import Jama.SingularValueDecomposition;
@@ -24,10 +28,10 @@ public class ImageRecognizer {
 	private String trainingSetPath;
 	private List<Image> images;
 	private SingularValueDecomposition svd;
-	private Map<Image, Matrix> mappedImages;
+	private Map<String, Matrix> mappedImages;
 	
 	public ImageRecognizer() {
-		mappedImages = new HashMap<Image, Matrix>();
+		mappedImages = new HashMap<String, Matrix>();
 	}
 	
 	public void setTrainingSetPath(String path) {
@@ -53,8 +57,31 @@ public class ImageRecognizer {
 		for (Image image : images) {
 			Matrix vector = image.getDataAsSingleDimensionalVector();
 			Matrix mappedImage = svd.getU().transpose().arrayTimes(vector);
-			mappedImages.put(image, mappedImage);
+			mappedImages.put(image.getName(), mappedImage);
 		}		
+	}
+	
+	public void findMostSimilarImages(String imageName) {
+		Matrix imageVector = mappedImages.get(imageName);
+		SortedMap<Double, String> largestSimilarities = new TreeMap<Double, String>();
+		
+		for (Entry<String, Matrix> mappedImage : mappedImages.entrySet()) {
+			double similarity = cosineSimilarity(mappedImage.getValue(), imageVector);
+			largestSimilarities.put(similarity, mappedImage.getKey());
+		}
+		
+		System.out.println("Most similar images: ");
+		Iterator<String> it = largestSimilarities.values().iterator();
+		for (int i = 0; i < 5; i++) {
+			System.out.println(it.next());
+		}
+	}
+	
+	private double cosineSimilarity(Matrix vector1, Matrix vector2) {
+		double dotProduct = vector1.arrayTimes(vector2).norm1();
+	    double eucledianDist = vector1.normF() * vector2.normF();
+	    return dotProduct / eucledianDist;
+
 	}
 
 	/**

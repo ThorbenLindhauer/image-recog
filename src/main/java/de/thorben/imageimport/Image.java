@@ -12,6 +12,7 @@ public class Image {
 	private int ySize;
 	private short[][] data;
 	private short maximumGreyScale;
+	private String name;
 	
 	public Image(int xSize, int ySize) {
 		this.xSize = xSize;
@@ -75,6 +76,13 @@ public class Image {
 	public int getYSize() {
 		return ySize;
 	}
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 	
 }

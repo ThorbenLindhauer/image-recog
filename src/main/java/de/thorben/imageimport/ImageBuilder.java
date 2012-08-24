@@ -28,6 +28,14 @@ public class ImageBuilder {
 		return this;
 	}
 	
+	public ImageBuilder setName(String name) {
+		if (image == null) {
+			throw new RuntimeException("Image not initialized yet.");
+		}
+		image.setName(name);
+		return this;
+	}
+	
 	public Image buildImage() {
 		return image;
 	}

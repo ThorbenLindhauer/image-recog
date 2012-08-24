@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ImageImporter {
-	private static final String DELIMITER = " ";
+	private static final String PIXEL_DELIMITER = " ";
+	private static final char FILE_NAME_DELIMITER = File.pathSeparatorChar;
+	
 	
 	private int xSize;
 	private int ySize;
@@ -26,8 +28,11 @@ public class ImageImporter {
 			InputStreamReader inputStreamReader = new InputStreamReader(fileStream);
 			BufferedReader reader = new BufferedReader(inputStreamReader);
 			
-			imgBuilder.newImage(xSize, ySize);
+			// TODO: assumes unique file names!
+			String imageName = filePath.substring(filePath.lastIndexOf(FILE_NAME_DELIMITER) + 1);
+			imgBuilder.newImage(xSize, ySize).setName(imageName);
 			
+			System.out.println("Loading image " + imageName + "...");
 			readPrefixes(reader, imgBuilder);
 			readContent(reader, imgBuilder);			
 		} catch (FileNotFoundException e) {
@@ -44,7 +49,7 @@ public class ImageImporter {
 		int xPos = 0;
 		int yPos = 0;
 		while(line != null) {
-			String[] values = line.trim().split(DELIMITER);
+			String[] values = line.trim().split(PIXEL_DELIMITER);
 			for (int i = 0; i < values.length; i++) {
 				short value = Short.parseShort(values[i]);
 				imgBuilder.setPoint(xPos, yPos, value);
@@ -65,7 +70,7 @@ public class ImageImporter {
 		
 		while(tokenCounter < 5) {
 			String line = reader.readLine();
-			String[] tokens = line.split(DELIMITER);
+			String[] tokens = line.split(PIXEL_DELIMITER);
 			for (int i = 0; i < tokens.length; i++, tokenCounter++) {
 				if (tokenCounter == 4) {
 					imgBuilder.setMaximumGreyScaleValue(Short.parseShort(tokens[i]));
