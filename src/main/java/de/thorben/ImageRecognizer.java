@@ -22,8 +22,8 @@ import de.thorben.matrix.MatrixBuilder;
 
 public class ImageRecognizer {
 
-	private static final int IMAGE_X_SIZE = 128;
-	private static final int IMAGE_Y_SIZE = 120;
+	private static final int IMAGE_X_SIZE = 92; //= 128;
+	private static final int IMAGE_Y_SIZE = 112; //= 120;
 	
 	private static final short MAXIMUM_GREY_VALUE = 255;
 	

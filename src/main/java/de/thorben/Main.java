@@ -8,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		ImageRecognizer recognizer = new ImageRecognizer();
-		recognizer.setTrainingSetPath("src/main/resources/faces/");
+		recognizer.setTrainingSetPath("src/main/resources/att_faces_convert/");
 		recognizer.buildUp();
 		
 		InputStreamReader isr = new InputStreamReader(System.in);           

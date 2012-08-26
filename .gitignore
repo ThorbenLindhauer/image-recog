@@ -5,6 +5,7 @@ target/
 bin/
 src/main/resources/faces/
 src/main/resources/lessFaces/
+src/main/resources/att_faces_convert/
 
 src/test/resources/faces/
 src/test/resources/trainingset/
