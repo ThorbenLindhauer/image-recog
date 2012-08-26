@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NavigableMap;
+import java.util.NavigableSet;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -56,24 +58,46 @@ public class ImageRecognizer {
 	private void mapImagesToLatentSpace() {
 		for (Image image : images) {
 			Matrix vector = image.getDataAsSingleDimensionalVector();
-			Matrix mappedImage = svd.getU().transpose().arrayTimes(vector);
+			Matrix mappedImage = null;
+			Matrix u = svd.getU();
+			// TODO fixme
+			mappedImage = u.transpose().times(vector);
+//			try {
+//				System.out.println("U transposed: " + u.transpose().getRowDimension() + " x " + u.transpose().getColumnDimension());
+//				System.out.println("Image Vector: " + vector.getRowDimension() + " x " + vector.getColumnDimension());
+//				mappedImage = u.transpose().arrayTimes(vector);
+//				
+//			} catch (Exception e) {
+//				mappedImage = u.arrayTimes(vector);
+//			}
 			mappedImages.put(image.getName(), mappedImage);
 		}		
 	}
 	
 	public void findMostSimilarImages(String imageName) {
 		Matrix imageVector = mappedImages.get(imageName);
-		SortedMap<Double, String> largestSimilarities = new TreeMap<Double, String>();
+		NavigableMap<Double, List<String>> largestSimilarities = new TreeMap<Double, List<String>>();
 		
 		for (Entry<String, Matrix> mappedImage : mappedImages.entrySet()) {
 			double similarity = cosineSimilarity(mappedImage.getValue(), imageVector);
-			largestSimilarities.put(similarity, mappedImage.getKey());
+			
+			List<String> similarities = largestSimilarities.get(similarity);
+			if (similarities == null) {
+				largestSimilarities.put(similarity, new ArrayList<String>());
+			}
+			largestSimilarities.get(similarity).add(mappedImage.getKey());
 		}
 		
 		System.out.println("Most similar images: ");
-		Iterator<String> it = largestSimilarities.values().iterator();
+		NavigableSet<Double> similarities = largestSimilarities.descendingKeySet();
+		Iterator<Double> it = similarities.iterator();
 		for (int i = 0; i < 5; i++) {
-			System.out.println(it.next());
+			Double similarity = it.next();
+			List<String> similarImages = largestSimilarities.get(similarity);
+			for (String similarImageName : similarImages) {
+				System.out.println("Similarity " + similarity + " for image " + similarImageName);
+			}
+			
 		}
 	}
 	
