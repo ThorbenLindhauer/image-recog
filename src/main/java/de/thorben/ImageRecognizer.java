@@ -60,21 +60,17 @@ public class ImageRecognizer {
 			Matrix vector = image.getDataAsSingleDimensionalVector();
 			Matrix mappedImage = null;
 			Matrix u = svd.getU();
-			// TODO fixme
 			mappedImage = u.transpose().times(vector);
-//			try {
-//				System.out.println("U transposed: " + u.transpose().getRowDimension() + " x " + u.transpose().getColumnDimension());
-//				System.out.println("Image Vector: " + vector.getRowDimension() + " x " + vector.getColumnDimension());
-//				mappedImage = u.transpose().arrayTimes(vector);
-//				
-//			} catch (Exception e) {
-//				mappedImage = u.arrayTimes(vector);
-//			}
 			mappedImages.put(image.getName(), mappedImage);
 		}		
 	}
 	
-	public void findMostSimilarImages(String imageName) {
+	/**
+	 * Finds the k most similar images
+	 * @param imageName
+	 * @param k
+	 */
+	public void findMostSimilarImages(String imageName, int k) {
 		Matrix imageVector = mappedImages.get(imageName);
 		NavigableMap<Double, List<String>> largestSimilarities = new TreeMap<Double, List<String>>();
 		
@@ -91,7 +87,7 @@ public class ImageRecognizer {
 		System.out.println("Most similar images: ");
 		NavigableSet<Double> similarities = largestSimilarities.descendingKeySet();
 		Iterator<Double> it = similarities.iterator();
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < k; i++) {
 			Double similarity = it.next();
 			List<String> similarImages = largestSimilarities.get(similarity);
 			for (String similarImageName : similarImages) {

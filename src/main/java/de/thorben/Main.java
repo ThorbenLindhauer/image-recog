@@ -8,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		ImageRecognizer recognizer = new ImageRecognizer();
-		recognizer.setTrainingSetPath("src/main/resources/lessFaces/");
+		recognizer.setTrainingSetPath("src/main/resources/faces/");
 		recognizer.buildUp();
 		
 		InputStreamReader isr = new InputStreamReader(System.in);           
@@ -16,7 +16,7 @@ public class Main {
 		while(true) {
 			System.out.println("Enter an image name to match:");
 			String imageName = br.readLine();
-			recognizer.findMostSimilarImages(imageName);
+			recognizer.findMostSimilarImages(imageName, 20);
 		}
 	}
 }
